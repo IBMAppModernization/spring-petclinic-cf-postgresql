@@ -12,6 +12,7 @@ CREATE TABLE vets (
 	last_name character varying(30),
 	CONSTRAINT pk_vets PRIMARY KEY (id)
 );
+ALTER SEQUENCE vets_id_seq restart with 7;
 CREATE INDEX idx_vets_last_name ON vets (last_name);
 
 CREATE TABLE specialties (
@@ -19,6 +20,7 @@ CREATE TABLE specialties (
 	name character varying(80),
 	CONSTRAINT pk_specialties PRIMARY KEY (id)
 );
+ALTER SEQUENCE specialties_id_seq restart with 4;
 CREATE INDEX idx_specialties_name ON specialties (name);
 
 CREATE TABLE vet_specialties (
@@ -34,6 +36,7 @@ CREATE TABLE types (
 	name character varying(80),
 	CONSTRAINT pk_types PRIMARY KEY (id)
 );
+ALTER SEQUENCE types_id_seq restart with 7;
 CREATE INDEX idx_types_name ON types (name);
 
 CREATE TABLE owners (
@@ -45,6 +48,7 @@ CREATE TABLE owners (
 	telephone character varying(20),
 	CONSTRAINT pk_owners PRIMARY KEY (id)
 );
+ALTER SEQUENCE owners_id_seq restart with 11;
 CREATE INDEX idx_owners_last_name ON owners (last_name);
 
 CREATE TABLE pets (
@@ -57,6 +61,7 @@ CREATE TABLE pets (
 	FOREIGN KEY (owner_id) REFERENCES owners (id),
 	CONSTRAINT pk_pets PRIMARY KEY (id)
 );
+ALTER SEQUENCE pets_id_seq restart with 14;
 CREATE INDEX idx_pets_name ON pets (name);
 
 CREATE TABLE visits (
@@ -67,3 +72,5 @@ CREATE TABLE visits (
 	FOREIGN KEY (pet_id) REFERENCES pets (id),
 	CONSTRAINT pk_visits PRIMARY KEY (id)
 );
+ALTER SEQUENCE visits_id_seq restart with 5;
+CREATE INDEX visits_pet_id ON visits (pet_id);
