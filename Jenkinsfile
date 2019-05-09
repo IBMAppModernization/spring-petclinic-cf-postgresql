@@ -20,11 +20,11 @@ pipeline {
             steps {
                 sh """
                   #!/bin/bash
-                 LOCAL_APP_NAME=${APP_NAME}
-                 LOCAL_DB_SERVICE_NAME=${DB_SERVICE_NAME}
-                 LOCAL_ORGANIZATION=${ORGANIZATION}
-                 LOCAL_SPACE=${SPACE}
-                 LOCAL_API_KEY=${API_KEY}
+                 LOCAL_APP_NAME="${APP_NAME}"
+                 LOCAL_DB_SERVICE_NAME="${DB_SERVICE_NAME}"
+                 LOCAL_ORGANIZATION="${ORGANIZATION}"
+                 LOCAL_SPACE="${SPACE}"
+                 LOCAL_API_KEY="${API_KEY}"
                  if [[ -z  "\${LOCAL_APP_NAME}" ]]; then
                     echo "Fatal error: APP_NAME param value is required"
                     exit 1
