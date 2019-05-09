@@ -2,10 +2,9 @@
 applications:
 - name: spring-petclinic
   memory: 768M
-  random-route: true
   buildpacks:
     - liberty-for-java
   path: ./target/spring-petclinic-cf-2.1.0.jar
   env:
-    #SPRING_PROFILES_ACTIVE: postgresql
-    JAVA_OPTS: '-Dspring.datasource.initialization-mode=always'
+    SPRING_PROFILES_ACTIVE: postgresql
+    JAVA_OPTS: '-Dspring.datasource.initialization-mode=never'
