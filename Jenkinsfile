@@ -20,20 +20,29 @@ pipeline {
             steps {
                 sh """
                   #!/bin/bash
-                 if [[ -z  "${APP_NAME}" ]]; then
+                 LOCAL_APP_NAME=${APP_NAME}
+                 LOCAL_DB_SERVICE_NAME=${DB_SERVICE_NAME}
+                 LOCAL_ORGANIZATION=${ORGANIZATION}
+                 LOCAL_SPACE=${SPACE}
+                 LOCAL_API_KEY=${API_KEY}
+                 if [[ -z  "\${LOCAL_APP_NAME}" ]]; then
                     echo "Fatal error: APP_NAME param value is required"
                     exit 1
                  fi
-                 if [[ -z  "${DB_SERVICE_NAME}" ]]; then
+                 if [[ -z  "\${LOCAL_DB_SERVICE_NAME}" ]]; then
                     echo "Fatal error: DB_SERVICE_NAME param value is required"
                     exit 1
                  fi
-                 if [[ -z  "${ORGANIZATION}" ]]; then
+                 if [[ -z  "\${LOCAL_ORGANIZATION}" ]]; then
                     echo "Fatal error: ORGANIZATION param value is required"
                     exit 1
                  fi
-                 if [[ -z  "${SPACE}" ]]; then
+                 if [[ -z  "\${LOCAL_SPACE}" ]]; then
                     echo "Fatal error: SPACE param value is required"
+                    exit 1
+                 fi
+                 if [[ -z  "\${LOCAL_API_KEY}" ]]; then
+                    echo "Fatal error: API_KEY param value is required"
                     exit 1
                  fi
                  echo "Initialization successful"
