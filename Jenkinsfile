@@ -41,10 +41,10 @@ pipeline {
              sh """
              #!/bin/bash
              ibmcloud login -a ${env.API_ENDPOINT} --apikey ${API_KEY} -r ${env.REGION} -g ${env.RESOURCE_GROUP}
-             ibmcloud target --cf-api ${CF_API_ENDPOINT} -o "${ORGANIZATION}" -s "${SPACE}"
-             route=$(ibmcloud cf app ${APP_NAME} | grep "routes:" | cut -d ':' -f 2 | xargs | cut -d ',' -f 1)
-             host=$(echo ${route%.$DOMAIN})
-             ibmcloud cf push ${APP_NAME}-snapshot-${env.BUILD_NUMBER} -f manifest-pipeline.yml --hostname ${host}-snapshot-${env.BUILD_NUMBER} --no-start
+             ibmcloud target --cf-api ${CF_API_ENDPOINT} -o ${ORGANIZATION} -s ${SPACE}
+             route=\$(ibmcloud cf app ${APP_NAME} | grep "routes:" | cut -d ':' -f 2 | xargs | cut -d ',' -f 1)
+             host=\$(echo \${route%.$DOMAIN})
+             ibmcloud cf push ${APP_NAME}-snapshot-${env.BUILD_NUMBER} -f manifest-pipeline.yml --hostname \${host}-snapshot-${env.BUILD_NUMBER} --no-start
              ibmcloud cf bind-service ${APP_NAME}-snapshot-${env.BUILD_NUMBER} ${DB_SERVICE_NAME}
              ibmcloud cf start ${APP_NAME}-snapshot-${env.BUILD_NUMBER}
              """
@@ -64,17 +64,17 @@ pipeline {
 
                 sh """
                 #!/bin/bash
-                newroute=$(ibmcloud cf app ${APP_NAME}-snapshot-${env.BUILD_NUMBER}  | grep "routes:" | cut -d ':' -f 2 | xargs | cut -d ',' -f 1)
-                newhost=$(echo ${newroute%.$DOMAIN})
-                oldroutes=$(ibmcloud cf app ${APP_NAME} | grep "routes:" | cut -d ':' -f 2 | xargs)
+                newroute=\$(ibmcloud cf app ${APP_NAME}-snapshot-${env.BUILD_NUMBER}  | grep "routes:" | cut -d ':' -f 2 | xargs | cut -d ',' -f 1)
+                newhost=\$(echo \${newroute%.$DOMAIN})
+                oldroutes=\$(ibmcloud cf app ${APP_NAME} | grep "routes:" | cut -d ':' -f 2 | xargs)
 
                 # Map all routes from previous version to new version
-                for i in ${oldroutes//,/ }
+                for i in \${oldroutes//,/ }
                 do
-                   host=$(echo ${i%.$DOMAIN})
+                   host=\$(echo \${i%.$DOMAIN})
                    ibmcloud cf map-route ${APP_NAME}-snapshot-${env.BUILD_NUMBER} ${DOMAIN} -n ${host}
                    sleep 1
-                   ibmcloud cf unmap-route ${APP_NAME} ${DOMAIN} -n ${host}
+                   ibmcloud cf unmap-route ${APP_NAME} ${DOMAIN} -n \${host}
                 done
                 # Unmap temporary route from new version
                 ibmcloud cf unmap-route ${APP_NAME}-snapshot-${env.BUILD_NUMBER} ${DOMAIN} -n ${newhost}
