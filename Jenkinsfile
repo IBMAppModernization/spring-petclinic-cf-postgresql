@@ -25,11 +25,11 @@ pipeline {
                  LOCAL_ORGANIZATION="${ORGANIZATION}"
                  LOCAL_SPACE="${SPACE}"
                  LOCAL_API_KEY="${API_KEY}"
-                 if [ -z  "\${LOCAL_APP_NAME}" ]; then
+                 if [ -z  "${APP_NAME}" ]; then
                     echo "Fatal error: APP_NAME param value is required"
                     exit 1
                  fi
-                 if [[ -z  "\${LOCAL_DB_SERVICE_NAME}" ]]; then
+                 if [ -z  "\${LOCAL_DB_SERVICE_NAME}" ]; then
                     echo "Fatal error: DB_SERVICE_NAME param value is required"
                     exit 1
                  fi
