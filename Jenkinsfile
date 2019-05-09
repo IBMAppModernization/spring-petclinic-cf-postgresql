@@ -25,7 +25,7 @@ pipeline {
                  echo "SPACE = ${SPACE}"
                  echo "DOMAIN = ${DOMAIN}"
                  oldroutes=djc-spring-petclinic-timely-reedbuck.mybluemix.net
-                 for i in \${oldroutes//,/ }
+                 for i in \${oldroutes\/\/,\/ }
                  do
 
                     echo \$i
