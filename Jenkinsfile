@@ -41,7 +41,7 @@ pipeline {
              sh """
              #!/bin/bash
              ibmcloud login -a ${env.API_ENDPOINT} --apikey ${API_KEY} -r ${env.REGION} -g ${env.RESOURCE_GROUP}
-             ibmcloud target --cf-api ${CF_API_ENDPOINT} -o ${ORGANIZATION} -s ${SPACE}
+             ibmcloud target --cf-api ${CF_API_ENDPOINT} -o "${ORGANIZATION}" -s "${SPACE}"
              route=$(ibmcloud cf app ${APP_NAME} | grep "routes:" | cut -d ':' -f 2 | xargs | cut -d ',' -f 1)
              host=$(echo ${route%.$DOMAIN})
              ibmcloud cf push ${APP_NAME}-snapshot-${env.BUILD_NUMBER} -f manifest-pipeline.yml --hostname ${host}-snapshot-${env.BUILD_NUMBER} --no-start
