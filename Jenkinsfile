@@ -27,8 +27,8 @@ pipeline {
                  oldroutes=djc-spring-petclinic-timely-reedbuck.mybluemix.net
                  for i in \${oldroutes//,/ }
                  do
-                    host=\$(echo \${i%.$DOMAIN})
-                    echo \$host
+
+                    echo \$i
                  done
                 '''
             }
