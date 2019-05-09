@@ -3,6 +3,7 @@ applications:
 - name: spring-petclinic
   memory: 768M
   random-route: true
+  timeout: 180
   buildpacks:
     - liberty-for-java
   path: ./target/spring-petclinic-cf-2.1.0.jar
