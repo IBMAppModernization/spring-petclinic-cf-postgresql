@@ -5,6 +5,7 @@ pipeline {
          RESOURCE_GROUP = "default"
          REGION = "us-south"
          API_ENDPOINT= "https://cloud.ibm.com"
+         DOMAIN = "mybluemix.net"
     }
 
     tools {
@@ -19,16 +20,27 @@ pipeline {
             steps {
                 sh """
                   #!/bin/bash
+                 if [[ -z  "${APP_NAME}" ]]; then
+                    echo "Fatal error: APP_NAME param value is required"
+                    exit 1
+                 fi
+                 if [[ -z  "${DB_SERVICE_NAME}" ]]; then
+                    echo "Fatal error: DB_SERVICE_NAME param value is required"
+                    exit 1
+                 fi
+                 if [[ -z  "${ORGANIZATION}" ]]; then
+                    echo "Fatal error: ORGANIZATION param value is required"
+                    exit 1
+                 fi
+                 if [[ -z  "${SPACE}" ]]; then
+                    echo "Fatal error: SPACE param value is required"
+                    exit 1
+                 fi
+                 echo "Initialization successful"
                  echo "APP_NAME = ${APP_NAME}"
                  echo "DB_SERVICE_NAME = ${DB_SERVICE_NAME}"
                  echo "ORGANIZATION = ${ORGANIZATION}"
                  echo "SPACE = ${SPACE}"
-                 echo "DOMAIN = ${DOMAIN}"
-                 variable=abc,def,ghij
-                 for i in \$(echo \$variable | sed "s/,/ /g")
-                 do
-                   echo "\$i"
-                 done
                  """
             }
          }
@@ -47,7 +59,7 @@ pipeline {
              #!/bin/bash
              ibmcloud login -a ${env.API_ENDPOINT} --apikey ${API_KEY} -r ${env.REGION} -g ${env.RESOURCE_GROUP} -o ${ORGANIZATION} -s ${SPACE}
              route=\$(ibmcloud cf app ${APP_NAME} | grep "routes:" | cut -d ':' -f 2 | xargs | cut -d ',' -f 1)
-             host=\$(echo \${route%.$DOMAIN})
+             host=\$(echo \${route%.${env.DOMAIN}})
              ibmcloud cf push ${APP_NAME}-snapshot-${env.BUILD_NUMBER} -f manifest-pipeline.yml --hostname \${host}-snapshot-${env.BUILD_NUMBER} --no-start
              ibmcloud cf bind-service ${APP_NAME}-snapshot-${env.BUILD_NUMBER} ${DB_SERVICE_NAME}
              ibmcloud cf start ${APP_NAME}-snapshot-${env.BUILD_NUMBER}
@@ -69,21 +81,21 @@ pipeline {
                 sh """
                 #!/bin/bash
                 newroute=\$(ibmcloud cf app ${APP_NAME}-snapshot-${env.BUILD_NUMBER}  | grep "routes:" | cut -d ':' -f 2 | xargs | cut -d ',' -f 1)
-                newhost=\$(echo \${newroute%.$DOMAIN})
+                newhost=\$(echo \${newroute%.${env.DOMAIN}})
                 oldroutes=\$(ibmcloud cf app ${APP_NAME} | grep "routes:" | cut -d ':' -f 2 | xargs)
 
                 # Map all routes from previous version to new version
-                OIFS=\$IFS
-                for i in \$oldroutes
+
+                for i in \$(echo \$oldroutes | sed "s/,/ /g")
                 do
-                   host=\$(echo \${i%.$DOMAIN})
-                   ibmcloud cf map-route ${APP_NAME}-snapshot-${env.BUILD_NUMBER} ${DOMAIN} -n \${host}
+                   host=\$(echo \${i%.${env.DOMAIN}})
+                   ibmcloud cf map-route ${APP_NAME}-snapshot-${env.BUILD_NUMBER} ${env.DOMAIN} -n \${host}
                    sleep 1
-                   ibmcloud cf unmap-route ${APP_NAME} ${DOMAIN} -n \${host}
+                   ibmcloud cf unmap-route ${APP_NAME} ${env.DOMAIN} -n \${host}
                 done
-                IFS=\$OIFS
+
                 # Unmap temporary route from new version
-                ibmcloud cf unmap-route ${APP_NAME}-snapshot-${env.BUILD_NUMBER} ${DOMAIN} -n \${newhost}
+                ibmcloud cf unmap-route ${APP_NAME}-snapshot-${env.BUILD_NUMBER} ${env.DOMAIN} -n \${newhost}
 
                 # Delete previous version
                 ibmcloud cf delete ${APP_NAME} -f
