@@ -24,6 +24,12 @@ pipeline {
                  echo "ORGANIZATION = ${ORGANIZATION}"
                  echo "SPACE = ${SPACE}"
                  echo "DOMAIN = ${DOMAIN}"
+                 oldroutes=djc-spring-petclinic-timely-reedbuck.mybluemix.net
+                 for i in \${oldroutes//,/ }
+                 do
+                    host=\$(echo \${i%.$DOMAIN})
+                    echo \$host
+                 done
                 '''
             }
          }
