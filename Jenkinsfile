@@ -17,20 +17,22 @@ pipeline {
     stages {
          stage ('Initialize') {
             steps {
-                sh '''
+                sh """
                   #!/bin/bash
                  echo "APP_NAME = ${APP_NAME}"
                  echo "DB_SERVICE_NAME = ${DB_SERVICE_NAME}"
                  echo "ORGANIZATION = ${ORGANIZATION}"
                  echo "SPACE = ${SPACE}"
                  echo "DOMAIN = ${DOMAIN}"
-                 oldroutes=djc-spring-petclinic-timely-reedbuck.mybluemix.net
-                 for i in \${oldroutes\/\/,\/ }
+                 oldroutes=djc-spring-petclinic-timely-reedbuck.mybluemix.net,djc-spring-petclinic-bedrock-reedbuck.mybluemix.net
+                 OIFS=$IFS
+                 IFS=','
+                 for i in $oldroutes
                  do
-
-                    echo \$i
+                   echo $i
                  done
-                '''
+                 IFS=$OIFS
+                 """
             }
          }
 
@@ -74,13 +76,15 @@ pipeline {
                 oldroutes=\$(ibmcloud cf app ${APP_NAME} | grep "routes:" | cut -d ':' -f 2 | xargs)
 
                 # Map all routes from previous version to new version
-                for i in \${oldroutes//,/ }
+                OIFS=\$IFS
+                for i in \$oldroutes
                 do
                    host=\$(echo \${i%.$DOMAIN})
                    ibmcloud cf map-route ${APP_NAME}-snapshot-${env.BUILD_NUMBER} ${DOMAIN} -n \${host}
                    sleep 1
                    ibmcloud cf unmap-route ${APP_NAME} ${DOMAIN} -n \${host}
                 done
+                IFS=\$OIFS
                 # Unmap temporary route from new version
                 ibmcloud cf unmap-route ${APP_NAME}-snapshot-${env.BUILD_NUMBER} ${DOMAIN} -n \${newhost}
 
