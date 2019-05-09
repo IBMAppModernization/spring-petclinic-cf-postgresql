@@ -24,14 +24,11 @@ pipeline {
                  echo "ORGANIZATION = ${ORGANIZATION}"
                  echo "SPACE = ${SPACE}"
                  echo "DOMAIN = ${DOMAIN}"
-                 oldroutes=djc-spring-petclinic-timely-reedbuck.mybluemix.net,djc-spring-petclinic-bedrock-reedbuck.mybluemix.net
-                 OIFS=$IFS
-                 IFS=','
-                 for i in $oldroutes
+                 variable=abc,def,ghij
+                 for i in \$(echo \$variable | sed "s/,/ /g")
                  do
-                   echo $i
+                   echo "\$i"
                  done
-                 IFS=$OIFS
                  """
             }
          }
