@@ -1,7 +1,7 @@
 ---
 applications:
 - name: spring-petclinic
-  memory: 768M
+  memory: 1024M
   buildpacks:
     - liberty-for-java
   path: ./target/spring-petclinic-cf-2.1.0.jar

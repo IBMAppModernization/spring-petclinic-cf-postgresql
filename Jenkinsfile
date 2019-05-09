@@ -72,15 +72,15 @@ pipeline {
                 for i in \${oldroutes//,/ }
                 do
                    host=\$(echo \${i%.$DOMAIN})
-                   ibmcloud cf map-route ${APP_NAME}-snapshot-${env.BUILD_NUMBER} ${DOMAIN} -n ${host}
+                   ibmcloud cf map-route ${APP_NAME}-snapshot-${env.BUILD_NUMBER} ${DOMAIN} -n \${host}
                    sleep 1
                    ibmcloud cf unmap-route ${APP_NAME} ${DOMAIN} -n \${host}
                 done
                 # Unmap temporary route from new version
-                ibmcloud cf unmap-route ${APP_NAME}-snapshot-${env.BUILD_NUMBER} ${DOMAIN} -n ${newhost}
+                ibmcloud cf unmap-route ${APP_NAME}-snapshot-${env.BUILD_NUMBER} ${DOMAIN} -n \${newhost}
 
                 # Delete previous version
-                ibmcloud cf delete ${APP_NAME}
+                ibmcloud cf delete ${APP_NAME} -f
 
                 # Rename new version
                 ibmcloud cf rename ${APP_NAME}-snapshot-${env.BUILD_NUMBER} ${APP_NAME}
