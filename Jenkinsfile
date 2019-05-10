@@ -20,31 +20,28 @@ pipeline {
             steps {
                 sh """
                   #!/bin/bash
-                 LOCAL_APP_NAME="${APP_NAME}"
-                 LOCAL_DB_SERVICE_NAME="${DB_SERVICE_NAME}"
-                 LOCAL_ORGANIZATION="${ORGANIZATION}"
-                 LOCAL_SPACE="${SPACE}"
-                 LOCAL_API_KEY="${API_KEY}"
                  if [ -z  "${APP_NAME}" ]; then
                     echo "Fatal error: APP_NAME param value is required"
                     exit 1
                  fi
-                 if [ -z  "\${LOCAL_DB_SERVICE_NAME}" ]; then
+                 if [ -z  "${DB_SERVICE_NAME}" ]; then
                     echo "Fatal error: DB_SERVICE_NAME param value is required"
                     exit 1
                  fi
-                 if [[ -z  "\${LOCAL_ORGANIZATION}" ]]; then
+                 if [ -z  "${ORGANIZATION}" ]; then
                     echo "Fatal error: ORGANIZATION param value is required"
                     exit 1
                  fi
-                 if [[ -z  "\${LOCAL_SPACE}" ]]; then
+                 if [ -z  "${SPACE}" ]; then
                     echo "Fatal error: SPACE param value is required"
                     exit 1
                  fi
-                 if [[ -z  "\${LOCAL_API_KEY}" ]]; then
+                 set +x
+                 if [ -z  "${API_KEY}" ]; then
                     echo "Fatal error: API_KEY param value is required"
                     exit 1
                  fi
+                 set -x
                  echo "Initialization successful"
                  echo "APP_NAME = ${APP_NAME}"
                  echo "DB_SERVICE_NAME = ${DB_SERVICE_NAME}"
@@ -66,7 +63,9 @@ pipeline {
 
              sh """
              #!/bin/bash
+             set +x
              ibmcloud login -a ${env.API_ENDPOINT} --apikey ${API_KEY} -r ${env.REGION} -g ${env.RESOURCE_GROUP} -o ${ORGANIZATION} -s ${SPACE}
+             set -x
              route=\$(ibmcloud cf app ${APP_NAME} | grep "routes:" | cut -d ':' -f 2 | xargs | cut -d ',' -f 1)
              host=\$(echo \${route%.${env.DOMAIN}})
              ibmcloud cf push ${APP_NAME}-snapshot-${env.BUILD_NUMBER} -f manifest-pipeline.yml --hostname \${host}-snapshot-${env.BUILD_NUMBER} --no-start
