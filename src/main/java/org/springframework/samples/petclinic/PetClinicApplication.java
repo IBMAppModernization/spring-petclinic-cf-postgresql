@@ -18,6 +18,11 @@ package org.springframework.samples.petclinic;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.samples.petclinic.config.ExtdbProperties;
+import javax.annotation.PostConstruct;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * PetClinic Spring Boot Application.
@@ -28,8 +33,20 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class PetClinicApplication {
 
+    @Autowired(required=false)
+    private ExtdbProperties extdbProperties;
+
+    private static Logger logger = LoggerFactory.getLogger(PetClinicApplication.class);
+
     public static void main(String[] args) {
         SpringApplication.run(PetClinicApplication.class, args);
+    }
+
+    @PostConstruct
+    public void init() {
+        if (extdbProperties != null) {
+           logger.info(extdbProperties.toString());
+        }
     }
 
 }

@@ -64,7 +64,7 @@ pipeline {
              sh """
              #!/bin/bash
              set +x
-             ibmcloud login -a ${env.API_ENDPOINT} --apikey ${API_KEY} -r ${env.REGION} -g ${env.RESOURCE_GROUP} -o ${ORGANIZATION} -s ${SPACE}
+             ibmcloud login -a ${env.API_ENDPOINT} --apikey ${API_KEY} -r ${env.REGION} -o ${ORGANIZATION} -s ${SPACE}
              set -x
              route=\$(ibmcloud cf app ${APP_NAME} | grep "routes:" | cut -d ':' -f 2 | xargs | cut -d ',' -f 1)
              host=\$(echo \${route%.${env.DOMAIN}})
